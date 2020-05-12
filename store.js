@@ -84,7 +84,6 @@ export const loadingExampleDataFailure = () => {
 const persistConfig = {
   key: 'primary',
   storage,
-  // whitelist: ['exampleData'], // place to select which state you want to persist
 }
 
 const persistedReducer = persistReducer(persistConfig, reducer)
