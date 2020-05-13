@@ -9,7 +9,7 @@ import useSWR from 'swr';
 const fetcher = url => fetch(url).then(r => r.json());
 
 function Index() {
-  const { data, error } = useSWR('http://localhost:8000/api/products', fetcher)
+  const { data, error } = useSWR('https://krismp-yummy-pizza-backend.herokuapp.com/api/products', fetcher)
   if (error) return <div>failed to load</div>
   if (!data) return <div>loading...</div>
   

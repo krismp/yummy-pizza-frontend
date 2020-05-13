@@ -31,7 +31,7 @@ function ProductDetail({ product, ...props}) {
   const classes = useStyles();
   const router = useRouter()
   const { id } = router.query
-  const { data, error } = useSWR(`http://localhost:8000/api/products/${id}`, fetcher)
+  const { data, error } = useSWR(`https://krismp-yummy-pizza-backend.herokuapp.com/api/products/${id}`, fetcher)
   if (error) return <div>failed to load</div>
   if (!data) return <div>loading...</div>
 
@@ -44,7 +44,7 @@ function ProductDetail({ product, ...props}) {
         total_price_in_usd: data.data.price_in_usd
       }
   
-      const res = await fetch('http://localhost:8000/api/cart_items', {
+      const res = await fetch('https://krismp-yummy-pizza-backend.herokuapp.com/api/cart_items', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
