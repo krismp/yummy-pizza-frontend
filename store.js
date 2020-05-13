@@ -9,6 +9,8 @@ const exampleInitialState = {
   count: 0,
   exampleData: [],
   error: null,
+  cartId: null,
+  currentCart: [],
 }
 
 export const actionTypes = {
@@ -48,6 +50,14 @@ export const reducer = (state = exampleInitialState, action) => {
       return Object.assign({}, state, {
         error: true,
       })
+    case actionTypes.ADD_TO_CART:
+      return Object.assign({}, state, {
+        currentCart: state.currentCart.push(action.data),
+      })
+    case actionTypes.RESET_CART:
+      return Object.assign({}, state, {
+        currentCart: exampleInitialState.currentCart,
+      })
     default:
       return state
   }
@@ -71,6 +81,14 @@ export const decrementCount = () => {
 
 export const resetCount = () => {
   return { type: actionTypes.RESET }
+}
+
+export const addToCart = (data) => {
+  return { type: actionTypes.ADD_TO_CART, data }
+}
+
+export const resetCart = () => {
+  return { type: actionTypes.RESET_CART }
 }
 
 export const loadExampleData = data => {
