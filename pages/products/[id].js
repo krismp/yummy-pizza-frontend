@@ -12,10 +12,11 @@ import Typography from "@material-ui/core/Typography";
 import Layout from "../../components/layout";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { addToCart } from '../../store';
+import { addToCart, showAlert } from '../../store';
 import fetch from 'isomorphic-unfetch';
 import getConfig from 'next/config';
 import theme from "../../src/theme";
+import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
 
 // SWR
 // import { useRouter } from "next/dist/client/router";
@@ -38,10 +39,11 @@ function ProductDetail(props) {
   // const { data } = useSWR(`${publicRuntimeConfig.API_BASE_URL}/products/${id}`, fetcher);
   // if (!data) return <div>loading...</div>
   // const { data: product } = data;
-
-  const { product, cartId, addToCart } = props;
+  const [loading, setLoading] = useState(false);
+  const { product, cartId, addToCart, showAlert } = props;
 
   async function handleAddToCart () {
+    setLoading(true)
     const body = JSON.stringify({
       cart_id: cartId,
       product_id: product.id,
@@ -58,9 +60,29 @@ function ProductDetail(props) {
     });
 
     const data = await res.json();
-    
+    setLoading(false)
     if (data.success) {
+      showAlert({
+        message: data.message,
+        severity: "success"
+      });
       addToCart(data);
+    } else {
+      const mainMessage = data.message;
+      const message = Object.keys(data.data).map(err => {
+        return <>
+          {data.data[err].map(e => {
+            return <li>{e}</li>
+          })}
+        </>
+      });
+      showAlert({
+        message: (<>
+          <p>{mainMessage}</p>
+          <ul>{message}</ul>
+        </>),
+        severity: "error"
+      });
     }
   }
 
@@ -112,10 +134,10 @@ function ProductDetail(props) {
                   variant="contained"
                   color="primary"
                   size="large"
-                  startIcon={<AddShoppingCartIcon />}
+                  startIcon={loading ? <HourglassEmptyIcon/> : <AddShoppingCartIcon />}
                   onClick={handleAddToCart}
                 >
-                  Add to cart
+                  {loading ? "Adding item..." : "Add to cart"}
                 </Button>
               </Grid>
             </Grid>
@@ -144,6 +166,6 @@ function mapStateToProps(state) {
 }
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ addToCart }, dispatch)
+  bindActionCreators({ addToCart, showAlert }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductDetail);

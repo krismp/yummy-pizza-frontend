@@ -7,9 +7,12 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Box from '@material-ui/core/Box';
 import Badge from '@material-ui/core/Badge';
-
+import Alert from "./alert";
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import LocalPizzaIcon from '@material-ui/icons/LocalPizza';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { closeAlert } from '../store';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,9 +35,9 @@ const useStyles = makeStyles((theme) => ({
   }
 }));
 
-export default function Layout({ children }) {
+export function Layout(props) {
   const classes = useStyles();
-
+  console.log("props.displayAlert", props.displayAlert)
   return (
     <Box className={classes.root}>
       <AppBar position="fixed">
@@ -63,8 +66,25 @@ export default function Layout({ children }) {
         </Toolbar>
       </AppBar>
       <Box className={classes.body}>
-        {children}
+        {props.children}
       </Box>
+      <Alert
+        isOpen={props.displayAlert.show}
+        autoHideDuration={props.displayAlert.autoHideDuration}
+        message={props.displayAlert.message}
+        severity={props.displayAlert.severity}
+        onClose={props.closeAlert}
+      />
     </Box>
   );
 }
+
+function mapStateToProps(state) {
+  const { displayAlert } = state
+  return { displayAlert }
+}
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({ closeAlert }, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(Layout);
