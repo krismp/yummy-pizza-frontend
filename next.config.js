@@ -1,6 +1,10 @@
+console.log({
+  API_BASE_URL: process.env.API_BASE_URL,
+})
+
 module.exports = {
-  serverRuntimeConfig: {
+  publicRuntimeConfig: {
     // Will only be available on the server side
-    apiBaseURL: process.env.NEXT_PUBLIC_API_BASE_URL,
+    API_BASE_URL: process.env.API_BASE_URL,
   },
 };

@@ -4,6 +4,9 @@ import Grid from "@material-ui/core/Grid";
 import Layout from "../components/layout";
 import Product from "../components/product";
 import fetch from 'isomorphic-unfetch';
+import getConfig from "next/config";
+
+const { publicRuntimeConfig } = getConfig();
 
 function Index({ products }) {
   return (
@@ -27,12 +30,14 @@ function Index({ products }) {
   );
 };
 
-Index.getInitialProps = async (appContext) => {
-  const res = await fetch(`https://krismp-yummy-pizza-backend.herokuapp.com/api/products`);
+export async function getServerSideProps() {
+  const res = await fetch(`${publicRuntimeConfig.API_BASE_URL}/products`);
   const json = await res.json();
 
   return {
-    products: json.data
+    props: {
+      products: json.data
+    }
   }
 }
 
