@@ -3,16 +3,10 @@ import Link from 'next/link'
 import Grid from "@material-ui/core/Grid";
 import Layout from "../components/layout";
 import Product from "../components/product";
-import fetch from 'unfetch';
-import useSWR from 'swr';
+import fetch from 'isomorphic-unfetch';
 
-const fetcher = url => fetch(url).then(r => r.json());
-
-function Index() {
-  const { data, error } = useSWR('https://krismp-yummy-pizza-backend.herokuapp.com/api/products', fetcher)
-  if (error) return <div>failed to load</div>
-  if (!data) return <div>loading...</div>
-  
+function Index({ products }) {
+  console.log("products", products)
   return (
     <Layout>
       <Grid
@@ -22,7 +16,7 @@ function Index() {
         alignItems="center"
         spacing={5}
       >
-        {(data && data.data.length) > 0 && data.data.map(product => (
+        {(products.length) > 0 && products.map(product => (
           <Grid item xs={12} lg={6} key={product.id}>
             <Link href={`/products/[id]`} as={`/products/${product.id}`}>
               <a><Product name={product.name} price={product.price_in_usd} /></a>
@@ -33,5 +27,14 @@ function Index() {
     </Layout>
   );
 };
+
+Index.getInitialProps = async (appContext) => {
+  const res = await fetch(`https://krismp-yummy-pizza-backend.herokuapp.com/api/products`);
+  const json = await res.json();
+
+  return {
+    products: json.data
+  }
+}
 
 export default Index;

@@ -14,10 +14,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { addToCart } from '../../store';
 import { useRouter } from 'next/router'
-import fetch from 'unfetch';
-import useSWR from 'swr';
-
-const fetcher = url => fetch(url).then(r => r.json());
+import fetch from 'isomorphic-unfetch';
 
 const useStyles = makeStyles((theme) => ({
   productPrice: {
@@ -27,34 +24,29 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function ProductDetail({ product, ...props}) {
+function ProductDetail(props) {
   const classes = useStyles();
-  const router = useRouter()
-  const { id } = router.query
-  const { data, error } = useSWR(`https://krismp-yummy-pizza-backend.herokuapp.com/api/products/${id}`, fetcher)
-  if (error) return <div>failed to load</div>
-  if (!data) return <div>loading...</div>
+  const { product, cartId } = props;
 
   const addToCart = async () => {
-    if (typeof data !== 'undefined') {
-      const body = {
-        cart_id: props.cartId,
-        product_id: id,
-        total: 1,
-        total_price_in_usd: data.data.price_in_usd
-      }
-  
-      const res = await fetch('https://krismp-yummy-pizza-backend.herokuapp.com/api/cart_items', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body,
-      });
-  
-      const data = await res.json();
-      console.log("data", data);
-    }
+    const body = JSON.stringify({
+      cart_id: cartId,
+      product_id: product.id,
+      total: 1,
+      total_price_in_usd: parseFloat(product.price_in_usd)
+    })
+
+    const res = await fetch('https://krismp-yummy-pizza-backend.herokuapp.com/api/cart_items', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body,
+    });
+
+    console.log("data", data);
+
+    const data = await res.json();
   }
 
   return (
@@ -63,9 +55,9 @@ function ProductDetail({ product, ...props}) {
         <CardActionArea>
           <CardMedia
             component="img"
-            alt={data.data.name}
+            alt={product.name}
             image="https://material-ui.com/static/images/cards/paella.jpg"
-            title={data.data.name}
+            title={product.name}
           />
           <CardContent>
             <Grid
@@ -76,7 +68,7 @@ function ProductDetail({ product, ...props}) {
             >
               <Grid item>
                 <Typography gutterBottom variant="h5" component="h2">
-                  {data.data.name}
+                  {product.name}
                 </Typography>
               </Grid>
               <Grid item>
@@ -86,12 +78,12 @@ function ProductDetail({ product, ...props}) {
                   component="h2"
                   className={classes.productPrice}
                 >
-                  ${data.data.price_in_usd}
+                  ${product.price_in_usd}
                 </Typography>
               </Grid>
             </Grid>
             <Typography variant="body2" color="textSecondary" component="p">
-              {data.data.detail}
+              {product.detail}
             </Typography>
           </CardContent>
           <CardActions>
@@ -119,6 +111,16 @@ function ProductDetail({ product, ...props}) {
       </Card>
     </Layout>
   );
+}
+
+ProductDetail.getInitialProps = async (appContext) => {
+  const { id } = appContext.query;
+  const res = await fetch(`https://krismp-yummy-pizza-backend.herokuapp.com/api/products/${id}`);
+  const json = await res.json();
+
+  return {
+    product: json.data
+  }
 }
 
 function mapStateToProps(state) {
