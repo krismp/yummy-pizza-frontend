@@ -19,6 +19,7 @@ const useStyles = makeStyles((theme) => ({
     marginTop: `5rem`,
     margin: `3rem auto`,
     maxWidth: `900px`,
+    padding: `3em`
   },
   title: {
     flexGrow: 1,
