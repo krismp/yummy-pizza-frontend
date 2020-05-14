@@ -6,7 +6,6 @@ import Product from "../components/product";
 import fetch from 'isomorphic-unfetch';
 
 function Index({ products }) {
-  console.log("products", products)
   return (
     <Layout>
       <Grid

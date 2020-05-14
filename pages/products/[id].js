@@ -13,7 +13,6 @@ import Layout from "../../components/layout";
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { addToCart } from '../../store';
-import { useRouter } from 'next/router'
 import fetch from 'isomorphic-unfetch';
 
 const useStyles = makeStyles((theme) => ({
@@ -43,8 +42,6 @@ function ProductDetail(props) {
       },
       body,
     });
-
-    console.log("data", data);
 
     const data = await res.json();
   }
