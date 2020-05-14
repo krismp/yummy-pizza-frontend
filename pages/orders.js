@@ -16,7 +16,7 @@ const useStyles = makeStyles({
     minWidth: 650,
   },
   pagination: {
-    padding: `2rem 0`,
+    padding: `3rem 0`,
     height: `2rem`
   }
 });
