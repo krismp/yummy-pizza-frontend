@@ -5,7 +5,7 @@ import storage from 'redux-persist/lib/storage'
 
 const exampleInitialState = {
   cartId: null,
-  currentCart: [],
+  currentCart: 0,
   displayAlert: {
     show: false,
     message: "",
@@ -16,6 +16,7 @@ const exampleInitialState = {
 
 export const actionTypes = {
   ADD_TO_CART: 'ADD_TO_CART',
+  REMOVE_FROM_CART: 'REMOVE_FROM_CART',
   RESET_CART: 'RESET_CART',
   SHOW_ALERT: 'SHOW_ALERT',
   CLOSE_ALERT: 'CLOSE_ALERT',
@@ -25,31 +26,44 @@ export const actionTypes = {
 export const reducer = (state = exampleInitialState, action) => {
   switch (action.type) {
     case actionTypes.ADD_TO_CART:
-      return Object.assign({}, state, {
-        currentCart: state.currentCart.push(action.data),
-      })
+      return {
+        ...state,
+        currentCart: state.currentCart + 1,
+        cartId: action.data.cart_id
+      }
+    case actionTypes.REMOVE_FROM_CART:
+      console.log("state.currentCart", state.currentCart);
+      console.log("action.total", action.total);
+      return {
+        ...state,
+        currentCart: state.currentCart - action.total,
+      }
     case actionTypes.RESET_CART:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         currentCart: exampleInitialState.currentCart,
-      })
+        cartId: exampleInitialState.cartId
+      }
     case actionTypes.SHOW_ALERT:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         displayAlert: {
           show: true,
           message: action.data.message,
           autoHideDuration: action.data.autoHideDuration || exampleInitialState.displayAlert.autoHideDuration,
           severity: action.data.severity || exampleInitialState.displayAlert.severity,
         }
-      })
+      }
     case actionTypes.CLOSE_ALERT:
-      return Object.assign({}, state, {
+      return {
+        ...state,
         displayAlert: {
           show: false,
           message: exampleInitialState.displayAlert.message,
           autoHideDuration: exampleInitialState.displayAlert.autoHideDuration,
           severity: exampleInitialState.displayAlert.severity,
         }
-      })
+      }
     default:
       return state
   }
@@ -58,6 +72,10 @@ export const reducer = (state = exampleInitialState, action) => {
 // ACTIONS
 export const addToCart = (data) => {
   return { type: actionTypes.ADD_TO_CART, data }
+}
+
+export const removeFromCart = (total) => {
+  return { type: actionTypes.REMOVE_FROM_CART, total }
 }
 
 export const resetCart = () => {

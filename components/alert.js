@@ -6,7 +6,6 @@ function Alert(props) {
 }
 
 export default function(props) {
-  console.log("ALERT", props)
   return (
     <Snackbar open={props.isOpen} autoHideDuration={props.autoHideDuration} onClose={props.onClose}>
       <Alert severity={props.severity} onClose={props.onClose}>

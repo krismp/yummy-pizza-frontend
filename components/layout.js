@@ -37,7 +37,6 @@ const useStyles = makeStyles((theme) => ({
 
 export function Layout(props) {
   const classes = useStyles();
-  console.log("props.displayAlert", props.displayAlert)
   return (
     <Box className={classes.root}>
       <AppBar position="fixed">
@@ -58,7 +57,7 @@ export function Layout(props) {
             </Link>
             <Link href="/cart">
               <a className={classes.link}>
-                <Badge badgeContent={0} color="secondary">
+                <Badge badgeContent={props.currentCart} color="error">
                   <ShoppingCartIcon/>
                 </Badge>
               </a>
@@ -80,8 +79,8 @@ export function Layout(props) {
 }
 
 function mapStateToProps(state) {
-  const { displayAlert } = state
-  return { displayAlert }
+  const { displayAlert, currentCart } = state
+  return { displayAlert, currentCart }
 }
 
 const mapDispatchToProps = dispatch =>
