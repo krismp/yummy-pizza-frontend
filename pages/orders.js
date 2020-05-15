@@ -42,7 +42,7 @@ function Order(props) {
       <Typography gutterBottom variant="h5" component="h2">
         {props.isLoggedIn ? `Hi ${props.user.name}, this is your last 5 order history:` : `You need to login to see your order history.`}
       </Typography>
-      <TableContainer component={Paper}>
+      {props.isLoggedIn && <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
           <TableHead>
             <TableRow>
@@ -68,7 +68,7 @@ function Order(props) {
           </TableBody>
         </Table>
         <Pagination count={10} variant="outlined" color="primary" className={classes.pagination} />
-      </TableContainer>
+      </TableContainer>}
     </Layout>
   );
 }
