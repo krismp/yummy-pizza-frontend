@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import Grid from "@material-ui/core/Grid";
@@ -18,11 +18,6 @@ import getConfig from 'next/config';
 import theme from "../../src/theme";
 import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
 
-// SWR
-// import { useRouter } from "next/dist/client/router";
-// import useSWR from "swr";
-// import fetcher from "../../lib/fetch";
-
 const Price = withStyles({
   root: {
     backgroundColor: theme.palette.primary.main,
@@ -34,24 +29,20 @@ const Price = withStyles({
 const { publicRuntimeConfig } = getConfig();
 
 function ProductDetail(props) {
-  // const router = useRouter();
-  // const { id } = router.query;
-  // const { data } = useSWR(`${publicRuntimeConfig.API_BASE_URL}/products/${id}`, fetcher);
-  // if (!data) return <div>loading...</div>
-  // const { data: product } = data;
   const [loading, setLoading] = useState(false);
   const { product, cartId, addToCart, showAlert } = props;
 
   async function handleAddToCart () {
     setLoading(true)
     const body = JSON.stringify({
+      user_id: null,
       cart_id: cartId,
       product_id: product.id,
       total: 1,
       total_price_in_usd: parseFloat(product.price_in_usd)
     })
 
-    const res = await fetch('https://krismp-yummy-pizza-backend.herokuapp.com/api/cart_items', {
+    const res = await fetch(`${publicRuntimeConfig.API_BASE_URL}/cart_items`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -66,7 +57,7 @@ function ProductDetail(props) {
         message: data.message,
         severity: "success"
       });
-      addToCart(data);
+      addToCart(data.data);
     } else {
       const mainMessage = data.message;
       const message = Object.keys(data.data).map(err => {
