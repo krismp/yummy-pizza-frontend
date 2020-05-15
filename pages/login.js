@@ -1,10 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import Avatar from "@material-ui/core/Avatar";
 import Button from "@material-ui/core/Button";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import TextField from "@material-ui/core/TextField";
-import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Checkbox from "@material-ui/core/Checkbox";
 import { Link } from "@material-ui/core";
 import ButtonLink from "../components/ButtonLink";
 import Grid from "@material-ui/core/Grid";
@@ -14,6 +12,12 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import Layout from "../components/layout";
+import fetch from "isomorphic-unfetch";
+import getConfig from "next/config";
+import { connect } from "react-redux";
+import { bindActionCreators } from 'redux';
+import { showAlert, login } from '../store';
+import { useRouter } from "next/router";
 
 function Copyright() {
   return (
@@ -48,8 +52,48 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function SignIn() {
+const { publicRuntimeConfig } = getConfig();
+
+function Login(props) {
   const classes = useStyles();
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    const res = await fetch(`${publicRuntimeConfig.API_BASE_URL}/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email,
+        password
+      }),
+    });
+
+    const data = await res.json();
+    setLoading(false);
+    if (data.success) {
+      props.login(data.data);
+      props.showAlert({
+        message: data.message,
+        severity: "success"
+      });
+      router.push("/");
+    } else {
+      const mainMessage = data.message;
+      props.showAlert({
+        message: (<>
+          <p>{mainMessage}</p>
+        </>),
+        severity: "error"
+      });
+    }
+  }
 
   return (
     <Layout>
@@ -62,7 +106,7 @@ export default function SignIn() {
           <Typography component="h1" variant="h5">
             Sign in
           </Typography>
-          <form className={classes.form} noValidate>
+          <form className={classes.form} onSubmit={handleLogin} noValidate>
             <TextField
               variant="outlined"
               margin="normal"
@@ -71,7 +115,7 @@ export default function SignIn() {
               id="email"
               label="Email Address"
               name="email"
-              autoComplete="email"
+              onChange={(e) => setEmail(e.target.value)}
             />
             <TextField
               variant="outlined"
@@ -82,11 +126,7 @@ export default function SignIn() {
               label="Password"
               type="password"
               id="password"
-              autoComplete="current-password"
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
+              onChange={(e) => setPassword(e.target.value)}
             />
             <Button
               type="submit"
@@ -113,3 +153,8 @@ export default function SignIn() {
     </Layout>
   );
 }
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({ login, showAlert }, dispatch)
+
+export default connect(null, mapDispatchToProps)(Login);

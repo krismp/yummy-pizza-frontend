@@ -12,6 +12,8 @@ const exampleInitialState = {
     severity: "warning",
     autoHideDuration: 3000
   },
+  isLoggedIn: false,
+  user: null
 }
 
 export const actionTypes = {
@@ -20,11 +22,26 @@ export const actionTypes = {
   RESET_CART: 'RESET_CART',
   SHOW_ALERT: 'SHOW_ALERT',
   CLOSE_ALERT: 'CLOSE_ALERT',
+  LOGIN_SUCCESS: 'LOGIN_SUCCESS',
+  LOGOUT_SUCCESS: 'LOGOUT_SUCCESS',
+  REGISTER_SUCCESS: 'REGISTER_SUCCESS',
 }
 
 // REDUCERS
 export const reducer = (state = exampleInitialState, action) => {
   switch (action.type) {
+    case actionTypes.LOGIN_SUCCESS:
+      return {
+        ...state,
+        user: action.data,
+        isLoggedIn: true,
+      }
+    case actionTypes.LOGOUT_SUCCESS:
+      return {
+        ...state,
+        user: exampleInitialState.user,
+        isLoggedIn: exampleInitialState.isLoggedIn,
+      }
     case actionTypes.ADD_TO_CART:
       return {
         ...state,
@@ -70,6 +87,14 @@ export const reducer = (state = exampleInitialState, action) => {
 }
 
 // ACTIONS
+export const login = (data) => {
+  return { type: actionTypes.LOGIN_SUCCESS, data }
+}
+
+export const logout = () => {
+  return { type: actionTypes.LOGOUT_SUCCESS }
+}
+
 export const addToCart = (data) => {
   return { type: actionTypes.ADD_TO_CART, data }
 }

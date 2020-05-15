@@ -12,7 +12,8 @@ import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import LocalPizzaIcon from '@material-ui/icons/LocalPizza';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { closeAlert } from '../store';
+import { showAlert, closeAlert, logout } from '../store';
+import { useRouter } from "next/router";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -37,6 +38,19 @@ const useStyles = makeStyles((theme) => ({
 
 export function Layout(props) {
   const classes = useStyles();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    props.logout();
+    props.showAlert({
+      message: "You've been logged out",
+      severity: "success"
+    });
+    router.push("/login");
+  }
+
+  const { isLoggedIn } = props;
+
   return (
     <Box className={classes.root}>
       <AppBar position="fixed">
@@ -52,9 +66,14 @@ export function Layout(props) {
             <Link href="/orders">
               <a className={classes.link}>Your Orders</a>
             </Link>
-            <Link href="/login">
+            {!isLoggedIn && <Link href="/login">
               <a className={classes.link}>Login</a>
-            </Link>
+            </Link>}
+            {isLoggedIn && <Link href="#" onClick={handleLogout}>
+              <a className={classes.link} onClick={handleLogout}>
+                (Hi {props.user.name}!) - Logout
+              </a>
+            </Link>}
             <Link href="/cart">
               <a className={classes.link}>
                 <Badge badgeContent={props.currentCart} color="error">
@@ -79,11 +98,11 @@ export function Layout(props) {
 }
 
 function mapStateToProps(state) {
-  const { displayAlert, currentCart } = state
-  return { displayAlert, currentCart }
+  const { displayAlert, currentCart, user, isLoggedIn } = state
+  return { displayAlert, currentCart, user, isLoggedIn }
 }
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ closeAlert }, dispatch)
+  bindActionCreators({ closeAlert, logout, showAlert }, dispatch)
 
 export default connect(mapStateToProps, mapDispatchToProps)(Layout);
