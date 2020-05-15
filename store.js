@@ -30,6 +30,12 @@ export const actionTypes = {
 // REDUCERS
 export const reducer = (state = exampleInitialState, action) => {
   switch (action.type) {
+    case actionTypes.REGISTER_SUCCESS:
+      return {
+        ...state,
+        user: action.data,
+        isLoggedIn: true,
+      }
     case actionTypes.LOGIN_SUCCESS:
       return {
         ...state,
@@ -87,6 +93,10 @@ export const reducer = (state = exampleInitialState, action) => {
 }
 
 // ACTIONS
+export const register = (data) => {
+  return { type: actionTypes.REGISTER_SUCCESS, data }
+}
+
 export const login = (data) => {
   return { type: actionTypes.LOGIN_SUCCESS, data }
 }
