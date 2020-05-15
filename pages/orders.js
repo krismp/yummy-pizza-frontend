@@ -10,6 +10,7 @@ import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
 import Pagination from '@material-ui/lab/Pagination';
 import Layout from '../components/layout';
+import { connect } from 'react-redux';
 
 const useStyles = makeStyles({
   table: {
@@ -33,13 +34,13 @@ const rows = [
   createData('Gingerbread', 1, `$16.0`, "Completed", "2020-04-12"),
 ];
 
-export default function SimpleTable() {
+function Order(props) {
   const classes = useStyles();
 
   return (
     <Layout>
       <Typography gutterBottom variant="h5" component="h2">
-        Your Orders
+        {props.isLoggedIn ? `Hi ${props.user.name}, this is your last 5 order history:` : `You need to login to see your order history.`}
       </Typography>
       <TableContainer component={Paper}>
         <Table className={classes.table} aria-label="simple table">
@@ -71,3 +72,10 @@ export default function SimpleTable() {
     </Layout>
   );
 }
+
+function mapStateToProps(state) {
+  const { user, isLoggedIn } = state
+  return { user, isLoggedIn }
+}
+
+export default connect(mapStateToProps)(Order);
