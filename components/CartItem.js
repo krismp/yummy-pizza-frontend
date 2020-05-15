@@ -6,8 +6,16 @@ import CardMedia from '@material-ui/core/CardMedia';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
-import AddIcon from '@material-ui/icons/Add';
-import RemoveIcon from '@material-ui/icons/Remove';
+// import AddIcon from '@material-ui/icons/Add';
+import DeleteIcon from '@material-ui/icons/Delete';
+// import RemoveIcon from '@material-ui/icons/Remove';
+import fetch from 'isomorphic-unfetch';
+import getConfig from 'next/config';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { resetCart, showAlert } from '../store';
+
+const { publicRuntimeConfig } = getConfig();
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -39,8 +47,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function MediaControlCard() {
+function CartItem(props) {
   const classes = useStyles();
+
+  async function deleteItem () {
+    props.onDeleteItem(props.itemId, props.total);
+  }
 
   return (
     <Card className={classes.root}>
@@ -52,21 +64,22 @@ export default function MediaControlCard() {
       <div className={classes.details}>
         <CardContent className={classes.content}>
           <Typography component="h5" variant="h5">
-            Live From Space
+            {props.product.name}
           </Typography>
           <Typography variant="subtitle1" color="textSecondary">
-            $10
+            ${props.total_price_in_usd}
           </Typography>
         </CardContent>
         <div className={classes.controls}>
-          <IconButton aria-label="previous">
+          {/* disabled, nice to have feature */}
+          {/* <IconButton aria-label="previous">
             <AddIcon/>
-          </IconButton>
+          </IconButton> */}
           <IconButton aria-label="play/pause">
             <TextField
               id="outlined-read-only-input"
               label="Total"
-              defaultValue="0"
+              defaultValue={props.total}
               InputProps={{
                 readOnly: true,
               }}
@@ -74,11 +87,25 @@ export default function MediaControlCard() {
               className={classes.input}
             />
           </IconButton>
-          <IconButton aria-label="next">
+          {/* disabled, nice to have feature */}
+          {/* <IconButton aria-label="next" disabled>
             <RemoveIcon/>
+          </IconButton> */}
+          <IconButton aria-label="next" onClick={deleteItem}>
+            <DeleteIcon/>
           </IconButton>
         </div>
       </div>
     </Card>
   );
 }
+
+function mapStateToProps(state) {
+  const { cartId } = state
+  return { cartId }
+}
+
+const mapDispatchToProps = dispatch =>
+  bindActionCreators({ resetCart, showAlert }, dispatch)
+
+export default connect(mapStateToProps, mapDispatchToProps)(CartItem);
