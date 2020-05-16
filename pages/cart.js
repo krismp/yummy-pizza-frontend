@@ -11,6 +11,7 @@ import getConfig from "next/config";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 import { removeFromCart, showAlert } from '../store';
+import { useRouter } from "next/router";
 
 const TotalCartPrice = withStyles({
   root: {
@@ -28,6 +29,7 @@ const { publicRuntimeConfig } = getConfig();
 export function CartPage(props) {
   const [cart, setCart] = useState({ cart_items: [] });
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
   
   useEffect(() => {
     fetchData();
@@ -44,7 +46,11 @@ export function CartPage(props) {
     }
   }
 
-  async function handleDeleteCartItem(itemId, total) {
+  const handleCheckout = () => {
+    router.push("/checkout");
+  }
+
+  const handleDeleteCartItem = async(itemId, total) => {
     setLoading(true);
     const res = await fetch(`${publicRuntimeConfig.API_BASE_URL}/cart_items/${itemId}`, {
       method: 'DELETE',
@@ -117,8 +123,8 @@ export function CartPage(props) {
             </Typography>
           </Grid>
           <Grid item xs={6}>
-            <Button variant="contained" color="primary">
-              Checkout
+            <Button variant="contained" color="primary" onClick={handleCheckout}>
+              {props.isLoggedIn ? `Checkout` : `Checkout as Guest` }
             </Button>
           </Grid>
         </Grid>
@@ -135,8 +141,8 @@ export function CartPage(props) {
 }
 
 function mapStateToProps(state) {
-  const { cartId } = state;
-  return { cartId };
+  const { cartId, isLoggedIn } = state;
+  return { cartId, isLoggedIn };
 }
 
 const mapDispatchToProps = dispatch =>
