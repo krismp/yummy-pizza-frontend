@@ -84,7 +84,7 @@ function ProductDetail(props) {
           <CardMedia
             component="img"
             alt={product.name}
-            image="https://material-ui.com/static/images/cards/paella.jpg"
+            image={product.name}
             title={product.name}
           />
           <CardContent>

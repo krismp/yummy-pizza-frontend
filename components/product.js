@@ -23,14 +23,14 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Product({ name, price }) {
+export default function Product({ name, price, image }) {
   const classes = useStyles();
 
   return (
     <Card className={classes.root}>
       <CardMedia
         className={classes.media}
-        image="https://material-ui.com/static/images/cards/paella.jpg"
+        image={image}
         title="Paella dish"
       />
       <CardContent className={classes.productInfo}>

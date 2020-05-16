@@ -21,7 +21,7 @@ function Index({ products }) {
         {(products.length) > 0 && products.map(product => (
           <Grid item xs={12} lg={6} key={product.id}>
             <Link href={`/products/[id]`} as={`/products/${product.id}`}>
-              <a><Product name={product.name} price={product.price_in_usd} /></a>
+              <a><Product name={product.name} price={product.price_in_usd} image={product.image} /></a>
             </Link>
           </Grid>
         ))}
