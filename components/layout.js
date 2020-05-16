@@ -63,6 +63,9 @@ export function Layout(props) {
                 <a className={classes.link}>Yummy Pizza</a>
               </Link>
             </Typography>
+            <Link href="/">
+              <a className={classes.link}>Menu</a>
+            </Link>
             <Link href="/orders">
               <a className={classes.link}>Your Orders</a>
             </Link>
