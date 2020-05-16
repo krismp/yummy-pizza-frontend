@@ -114,13 +114,13 @@ export function CartPage(props) {
                 onDeleteItem={handleDeleteCartItem}
               />
             );
-          }) : (loading ? <CircularProgress/> : <Typography gutterBottom variant="h5" component="h2">
+          }) : (loading ? <CircularProgress/> : <Typography gutterBottom variant="small" component="p">
             Your cart is empty!
           </Typography>)
         }
       </Grid>
     </Grid>
-    <TotalCartPrice elevation={6}>
+    {cart.cart_items.length > 0 && <TotalCartPrice elevation={6}>
       <Grid container direction="row" justify="center" alignItems="center">
         <Grid item xs={6}>
           <Typography gutterBottom variant="h5" component="h2">
@@ -133,7 +133,7 @@ export function CartPage(props) {
           </Button>
         </Grid>
       </Grid>
-    </TotalCartPrice>
+    </TotalCartPrice>}
   </Layout>;
 }
 
