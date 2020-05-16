@@ -67,7 +67,7 @@ function Order(props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {(loading && orders.length > 0) ? orders.map((order) => (
+            {(!loading && orders.length > 0) ? orders.map((order) => (
               <TableRow key={order.id}>
                 <TableCell align="right">{order.created_at}</TableCell>
                 <TableCell component="th" scope="row">
