@@ -58,7 +58,7 @@ function CartItem(props) {
     <Card className={classes.root}>
       <CardMedia
         className={classes.cover}
-        image="https://material-ui.com/static/images/cards/paella.jpg"  
+        image={props.product.image}
         title="Live from space album cover"
       />
       <div className={classes.details}>
