@@ -84,7 +84,7 @@ function ProductDetail(props) {
           <CardMedia
             component="img"
             alt={product.name}
-            image={product.name}
+            image={product.image}
             title={product.name}
           />
           <CardContent>
