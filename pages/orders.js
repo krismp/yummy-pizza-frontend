@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link'
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Table from '@material-ui/core/Table';
@@ -73,7 +74,11 @@ function Order(props) {
                 <TableCell component="th" scope="row">
                     <ul>
                       {order.items.map(item => (
-                        <li>{item.name}: {item.total} pc(s) - ${item.unit_price}</li>
+                        <li>
+                          <Link href={`/products/[id]`} as={`/products/${item.id}`}>
+                            <a>{item.name}: {item.total} pc(s) - ${item.unit_price}</a>
+                          </Link>
+                        </li>
                       ))}
                     </ul>
                 </TableCell>
