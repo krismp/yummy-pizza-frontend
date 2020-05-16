@@ -9,6 +9,7 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Layout from '../components/layout';
 import fetch from "isomorphic-unfetch";
 import { connect } from 'react-redux';
@@ -23,10 +24,12 @@ const useStyles = makeStyles({
 const { publicRuntimeConfig } = getConfig();
 
 function Order(props) {
+  const [loading, setLoading] = useState(false);
   const [orders, setOrders] = useState([]);
   const classes = useStyles();
 
   const fetchOrders = async () => {
+    setLoading(true);
     const result = await fetch(`${publicRuntimeConfig.API_BASE_URL}/orders?user_id=${props.user.id}`, {
       method: 'GET',
       headers: {
@@ -37,6 +40,7 @@ function Order(props) {
 
     const json = await result.json();
     setOrders(json.data);
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -63,12 +67,7 @@ function Order(props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {orders.length === 0 && <TableRow>
-                <TableCell align="center" colSpan={5}>
-                  You don't have any order
-                </TableCell>
-            </TableRow>}
-            {orders.length > 0 && orders.map((order) => (
+            {(loading && orders.length > 0) ? orders.map((order) => (
               <TableRow key={order.id}>
                 <TableCell align="right">{order.created_at}</TableCell>
                 <TableCell component="th" scope="row">
@@ -87,7 +86,11 @@ function Order(props) {
                 <TableCell align="right">${order.delivery_cost_in_usd}</TableCell>
                 <TableCell align="right">${order.final_price_in_usd}</TableCell>
               </TableRow>
-            ))}
+            )) : <TableRow>
+              <TableCell align="center" colSpan={5}>
+                {loading ? <CircularProgress/> : `You don't have any order`}
+              </TableCell>
+            </TableRow>}
           </TableBody>
         </Table>
       </TableContainer>}
