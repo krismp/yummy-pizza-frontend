@@ -97,6 +97,7 @@ function Checkout(props) {
         user_id: props.user ? props.user.id : props.user,
         cart_id: props.cartId,
         address,
+        delivery_cost_in_usd: deliveryCost,
         final_price_in_usd: parseFloat((cart.total_price + deliveryCost).toFixed(2)),
         status: "waiting",
       }),
