@@ -209,7 +209,7 @@ function Checkout(props) {
 
 const mapStateToProps = (state) => {
   const { cartId, isLoggedIn, user } = state;
-  return { cartId, isLoggedIn };
+  return { cartId, isLoggedIn, user };
 }
 
 const mapDispatchToProps = dispatch =>

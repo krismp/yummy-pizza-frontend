@@ -13,7 +13,11 @@ const exampleInitialState = {
     autoHideDuration: 3000
   },
   isLoggedIn: false,
-  user: null
+  user: {
+    id: null,
+    token: "",
+    name: ""
+  }
 }
 
 export const actionTypes = {
@@ -37,9 +41,14 @@ export const reducer = (state = exampleInitialState, action) => {
         isLoggedIn: true,
       }
     case actionTypes.LOGIN_SUCCESS:
+      const newUser = {
+        id: action.data.id,
+        token: action.data.token,
+        name: action.data.name,
+      };
       return {
         ...state,
-        user: action.data,
+        user: newUser,
         isLoggedIn: true,
       }
     case actionTypes.LOGOUT_SUCCESS:
@@ -55,8 +64,6 @@ export const reducer = (state = exampleInitialState, action) => {
         cartId: action.data.cart_id
       }
     case actionTypes.REMOVE_FROM_CART:
-      console.log("state.currentCart", state.currentCart);
-      console.log("action.total", action.total);
       return {
         ...state,
         currentCart: state.currentCart - action.total,

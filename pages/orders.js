@@ -55,9 +55,10 @@ function Order(props) {
             <TableRow>
               <TableCell align="right">Order Date</TableCell>
               <TableCell>Item(s)</TableCell>
-              <TableCell align="right">Amount</TableCell>
-              <TableCell align="right">Price</TableCell>
               <TableCell align="right">Status</TableCell>
+              <TableCell align="right">Total Items</TableCell>
+              <TableCell align="right">Delivery Cost</TableCell>
+              <TableCell align="right">Final Price</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -72,13 +73,14 @@ function Order(props) {
                 <TableCell component="th" scope="row">
                     <ul>
                       {order.items.map(item => (
-                        <li>{item.name}: {item.total} pc(s)</li>
+                        <li>{item.name}: {item.total} pc(s) - ${item.unit_price}</li>
                       ))}
                     </ul>
                 </TableCell>
-                <TableCell align="right">{order.total_items}</TableCell>
-                <TableCell align="right">${order.total_cart_price_in_usd}</TableCell>
                 <TableCell align="right">{order.status}</TableCell>
+                <TableCell align="right">{order.total_items}</TableCell>
+                <TableCell align="right">${order.delivery_cost_in_usd}</TableCell>
+                <TableCell align="right">${order.final_price_in_usd}</TableCell>
               </TableRow>
             ))}
           </TableBody>
