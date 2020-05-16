@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import Table from '@material-ui/core/Table';
@@ -8,34 +8,41 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import Pagination from '@material-ui/lab/Pagination';
 import Layout from '../components/layout';
+import fetch from "isomorphic-unfetch";
 import { connect } from 'react-redux';
+import getConfig from "next/config";
 
 const useStyles = makeStyles({
   table: {
     minWidth: 650,
-  },
-  pagination: {
-    padding: `3rem 0`,
-    height: `2rem`
   }
 });
 
-function createData(name, calories, fat, carbs, orderedAt) {
-  return { name, calories, fat, carbs, orderedAt };
-}
-
-const rows = [
-  createData('Frozen yoghurt', 2, `$6.0`, "Completed", "2020-04-12"),
-  createData('Ice cream sandwich', 2, `$9.0`, "Completed", "2020-04-12"),
-  createData('Eclair', 2, `$16.0`, "Completed", "2020-04-12"),
-  createData('Cupcake', 1, `$3.7`, "Completed", "2020-04-12"),
-  createData('Gingerbread', 1, `$16.0`, "Completed", "2020-04-12"),
-];
+const { publicRuntimeConfig } = getConfig();
 
 function Order(props) {
+  const [orders, setOrders] = useState([]);
   const classes = useStyles();
+
+  const fetchOrders = async () => {
+    const result = await fetch(`${publicRuntimeConfig.API_BASE_URL}/orders?user_id=${props.user.id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${props.user.token}`
+      },
+    });
+
+    const json = await result.json();
+    setOrders(json.data);
+  }
+
+  useEffect(() => {
+    if (props.isLoggedIn) {
+      fetchOrders();
+    }
+  }, []);
 
   return (
     <Layout>
@@ -46,28 +53,36 @@ function Order(props) {
         <Table className={classes.table} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Menus</TableCell>
+              <TableCell align="right">Order Date</TableCell>
+              <TableCell>Item(s)</TableCell>
               <TableCell align="right">Amount</TableCell>
               <TableCell align="right">Price</TableCell>
               <TableCell align="right">Status</TableCell>
-              <TableCell align="right">Ordered At</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.name}>
-              <TableCell component="th" scope="row">
-                  {row.name}
-              </TableCell>
-              <TableCell align="right">{row.calories}</TableCell>
-              <TableCell align="right">{row.fat}</TableCell>
-              <TableCell align="right">{row.carbs}</TableCell>
-              <TableCell align="right">{row.orderedAt}</TableCell>
+            {orders.length === 0 && <TableRow>
+                <TableCell align="center" colSpan={5}>
+                  You don't have any order
+                </TableCell>
+            </TableRow>}
+            {orders.length > 0 && orders.map((order) => (
+              <TableRow key={order.id}>
+                <TableCell align="right">{order.created_at}</TableCell>
+                <TableCell component="th" scope="row">
+                    <ul>
+                      {order.items.map(item => (
+                        <li>{item.name}: {item.total} pc(s)</li>
+                      ))}
+                    </ul>
+                </TableCell>
+                <TableCell align="right">{order.total_items}</TableCell>
+                <TableCell align="right">${order.total_cart_price_in_usd}</TableCell>
+                <TableCell align="right">{order.status}</TableCell>
               </TableRow>
             ))}
           </TableBody>
         </Table>
-        <Pagination count={10} variant="outlined" color="primary" className={classes.pagination} />
       </TableContainer>}
     </Layout>
   );
