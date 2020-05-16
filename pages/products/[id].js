@@ -30,12 +30,12 @@ const { publicRuntimeConfig } = getConfig();
 
 function ProductDetail(props) {
   const [loading, setLoading] = useState(false);
-  const { product, cartId, addToCart, showAlert } = props;
+  const { product, cartId, addToCart, showAlert, user } = props;
 
   async function handleAddToCart () {
     setLoading(true)
     const body = JSON.stringify({
-      user_id: null,
+      user_id: user.id,
       cart_id: cartId,
       product_id: product.id,
       total: 1,
@@ -152,8 +152,8 @@ export async function getServerSideProps(appContext) {
 }
 
 function mapStateToProps(state) {
-  const { cartId } = state
-  return { cartId }
+  const { cartId, user } = state
+  return { cartId, user }
 }
 
 const mapDispatchToProps = dispatch =>
