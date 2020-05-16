@@ -69,7 +69,7 @@ export function Layout(props) {
             {!isLoggedIn && <Link href="/login">
               <a className={classes.link}>Login</a>
             </Link>}
-            {isLoggedIn && <Link>
+            {isLoggedIn && <Link href="#">
               <a className={classes.link} onClick={handleLogout}>
                 (Hi {props.user.name}!) - Logout
               </a>
