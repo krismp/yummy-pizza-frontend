@@ -5,7 +5,6 @@ import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import CircularProgress from '@material-ui/core/CircularProgress';
-import Layout from "../components/layout";
 import CartItem from "../components/CartItem";
 import fetch from "isomorphic-unfetch";
 import getConfig from "next/config";
@@ -90,7 +89,7 @@ export function CartPage(props) {
     }
   }
 
-  return <Layout>
+  return <>
     <Typography gutterBottom variant="h5" component="h2">
       Your Cart
     </Typography>
@@ -134,7 +133,7 @@ export function CartPage(props) {
         </Grid>
       </Grid>
     </TotalCartPrice>}
-  </Layout>;
+  </>;
 }
 
 function mapStateToProps(state) {

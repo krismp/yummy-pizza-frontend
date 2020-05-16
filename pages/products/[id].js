@@ -9,21 +9,20 @@ import CardMedia from "@material-ui/core/CardMedia";
 import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
-import Layout from "../../components/layout";
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { addToCart, showAlert } from '../../store';
-import fetch from 'isomorphic-unfetch';
-import getConfig from 'next/config';
+import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { addToCart, showAlert } from "../../store";
+import fetch from "isomorphic-unfetch";
+import getConfig from "next/config";
 import theme from "../../src/theme";
-import HourglassEmptyIcon from '@material-ui/icons/HourglassEmpty';
+import HourglassEmptyIcon from "@material-ui/icons/HourglassEmpty";
 
 const Price = withStyles({
   root: {
     backgroundColor: theme.palette.primary.main,
     color: `white`,
     padding: theme.spacing(1),
-  }
+  },
 })(Typography);
 
 const { publicRuntimeConfig } = getConfig();
@@ -32,110 +31,110 @@ function ProductDetail(props) {
   const [loading, setLoading] = useState(false);
   const { product, cartId, addToCart, showAlert, user } = props;
 
-  async function handleAddToCart () {
-    setLoading(true)
+  async function handleAddToCart() {
+    setLoading(true);
     const body = JSON.stringify({
       user_id: user.id,
       cart_id: cartId,
       product_id: product.id,
       total: 1,
-      total_price_in_usd: parseFloat(product.price_in_usd)
-    })
+      total_price_in_usd: parseFloat(product.price_in_usd),
+    });
 
     const res = await fetch(`${publicRuntimeConfig.API_BASE_URL}/cart_items`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body,
     });
 
     const data = await res.json();
-    setLoading(false)
+    setLoading(false);
     if (data.success) {
       showAlert({
         message: data.message,
-        severity: "success"
+        severity: "success",
       });
       addToCart(data.data);
     } else {
       const mainMessage = data.message;
-      const message = Object.keys(data.data).map(err => {
-        return <>
-          {data.data[err].map(e => {
-            return <li>{e}</li>
-          })}
-        </>
+      const message = Object.keys(data.data).map((err) => {
+        return (
+          <>
+            {data.data[err].map((e) => {
+              return <li>{e}</li>;
+            })}
+          </>
+        );
       });
       showAlert({
-        message: (<>
-          <p>{mainMessage}</p>
-          <ul>{message}</ul>
-        </>),
-        severity: "error"
+        message: (
+          <>
+            <p>{mainMessage}</p>
+            <ul>{message}</ul>
+          </>
+        ),
+        severity: "error",
       });
     }
   }
 
   return (
-    <Layout>
-      <Card>
-        <CardActionArea>
-          <CardMedia
-            component="img"
-            alt={product.name}
-            image={product.image}
-            title={product.name}
-          />
-          <CardContent>
-            <Grid
-              container
-              direction="column"
-              justify="space-between"
-              alignItems="center"
-            >
-              <Grid item>
-                <Typography gutterBottom variant="h5" component="h2">
-                  {product.name}
-                </Typography>
-              </Grid>
-              <Grid item>
-                <Price
-                  gutterBottom
-                  variant="h6"
-                  component="h2"
-                >
-                  ${product.price_in_usd}
-                </Price>
-              </Grid>
+    <Card>
+      <CardActionArea>
+        <CardMedia
+          component="img"
+          alt={product.name}
+          image={product.image}
+          title={product.name}
+        />
+        <CardContent>
+          <Grid
+            container
+            direction="column"
+            justify="space-between"
+            alignItems="center"
+          >
+            <Grid item>
+              <Typography gutterBottom variant="h5" component="h2">
+                {product.name}
+              </Typography>
             </Grid>
-            <Typography variant="body2" color="textSecondary" component="p">
-              {product.detail}
-            </Typography>
-          </CardContent>
-          <CardActions>
-            <Grid
-              container
-              direction="row"
-              justify="flex-end"
-              alignItems="center"
-            >
-              <Grid item>
-                <Button
-                  variant="contained"
-                  color="primary"
-                  size="large"
-                  startIcon={loading ? <HourglassEmptyIcon/> : <AddShoppingCartIcon />}
-                  onClick={handleAddToCart}
-                >
-                  {loading ? "Adding item..." : "Add to cart"}
-                </Button>
-              </Grid>
+            <Grid item>
+              <Price gutterBottom variant="h6" component="h2">
+                ${product.price_in_usd}
+              </Price>
             </Grid>
-          </CardActions>
-        </CardActionArea>
-      </Card>
-    </Layout>
+          </Grid>
+          <Typography variant="body2" color="textSecondary" component="p">
+            {product.detail}
+          </Typography>
+        </CardContent>
+        <CardActions>
+          <Grid
+            container
+            direction="row"
+            justify="flex-end"
+            alignItems="center"
+          >
+            <Grid item>
+              <Button
+                variant="contained"
+                color="primary"
+                size="large"
+                startIcon={
+                  loading ? <HourglassEmptyIcon /> : <AddShoppingCartIcon />
+                }
+                onClick={handleAddToCart}
+              >
+                {loading ? "Adding item..." : "Add to cart"}
+              </Button>
+            </Grid>
+          </Grid>
+        </CardActions>
+      </CardActionArea>
+    </Card>
   );
 }
 
@@ -146,17 +145,17 @@ export async function getServerSideProps(appContext) {
 
   return {
     props: {
-      product: json.data
-    }
-  }
+      product: json.data,
+    },
+  };
 }
 
 function mapStateToProps(state) {
-  const { cartId, user } = state
-  return { cartId, user }
+  const { cartId, user } = state;
+  return { cartId, user };
 }
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators({ addToCart, showAlert }, dispatch)
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators({ addToCart, showAlert }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductDetail);

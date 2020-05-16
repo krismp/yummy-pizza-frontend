@@ -15,7 +15,6 @@ import Typography from "@material-ui/core/Typography";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-import Layout from "../components/layout";
 import fetch from "isomorphic-unfetch";
 import getConfig from "next/config";
 import { connect } from "react-redux";
@@ -140,79 +139,77 @@ function Checkout(props) {
 
   const finalPrice = parseFloat((cart.total_price + deliveryCost).toFixed(2));
   return (
-    <Layout>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <div className={classes.paper}>
-          <Avatar className={classes.avatar}>
-            <MonetizationOnIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Checkout {!props.isLoggedIn && `as guest`}
-          </Typography>
-          <Table className={classes.table} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Item Name</TableCell>
-                <TableCell align="right">Amount</TableCell>
-                <TableCell align="right">Price</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {loading && <TableRow>
-                <TableCell align="center" colSpan={3}>
-                  <CircularProgress/>
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <MonetizationOnIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Checkout {!props.isLoggedIn && `as guest`}
+        </Typography>
+        <Table className={classes.table} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Item Name</TableCell>
+              <TableCell align="right">Amount</TableCell>
+              <TableCell align="right">Price</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {loading && <TableRow>
+              <TableCell align="center" colSpan={3}>
+                <CircularProgress/>
+              </TableCell>
+            </TableRow>}
+            {!loading && cart.cart_items.length > 0 && cart.cart_items.map((item) => (
+              <TableRow key={item.product.id}>
+                <TableCell component="th" scope="row">
+                    {item.product.name}
                 </TableCell>
-              </TableRow>}
-              {!loading && cart.cart_items.length > 0 && cart.cart_items.map((item) => (
-                <TableRow key={item.product.id}>
-                  <TableCell component="th" scope="row">
-                      {item.product.name}
-                  </TableCell>
-                  <TableCell align="right">{item.total}</TableCell>
-                  <TableCell align="right">${item.total_price_in_usd}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-            <TableRow>
-              <TableCell variant="footer" colSpan={2}>Cost Delivery</TableCell>
-              <TableCell variant="footer" align="right">${deliveryCost}</TableCell>
-            </TableRow>
-            <TableRow>
-              <TableCell variant="head" colSpan={2}>TOTAL</TableCell>
-              <TableCell variant="head" align="right">${finalPrice}</TableCell>
-            </TableRow>
-          </Table>
-          <form className={classes.form} noValidate onSubmit={handleCheckout}>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="address"
-              label="Enter your delivery address"
-              name="address"
-              autoComplete="address"
-              multiline
-              rows={10}
-              onChange={(e) => setAddress(e.target.value)}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-            >
-              Complete Order
-            </Button>
-          </form>
-        </div>
-        <Box mt={8}>
-          <Copyright />
-        </Box>
-      </Container>
-    </Layout>
+                <TableCell align="right">{item.total}</TableCell>
+                <TableCell align="right">${item.total_price_in_usd}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+          <TableRow>
+            <TableCell variant="footer" colSpan={2}>Cost Delivery</TableCell>
+            <TableCell variant="footer" align="right">${deliveryCost}</TableCell>
+          </TableRow>
+          <TableRow>
+            <TableCell variant="head" colSpan={2}>TOTAL</TableCell>
+            <TableCell variant="head" align="right">${finalPrice}</TableCell>
+          </TableRow>
+        </Table>
+        <form className={classes.form} noValidate onSubmit={handleCheckout}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="address"
+            label="Enter your delivery address"
+            name="address"
+            autoComplete="address"
+            multiline
+            rows={10}
+            onChange={(e) => setAddress(e.target.value)}
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+          >
+            Complete Order
+          </Button>
+        </form>
+      </div>
+      <Box mt={8}>
+        <Copyright />
+      </Box>
+    </Container>
   );
 }
 

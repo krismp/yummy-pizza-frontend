@@ -9,12 +9,11 @@ import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-import Layout from "../components/layout";
 import fetch from "isomorphic-unfetch";
 import getConfig from "next/config";
 import { connect } from "react-redux";
-import { bindActionCreators } from 'redux';
-import { showAlert, register } from '../store';
+import { bindActionCreators } from "redux";
+import { showAlert, register } from "../store";
 import { useRouter } from "next/router";
 
 function Copyright() {
@@ -65,9 +64,9 @@ function Register(props) {
     e.preventDefault();
     setLoading(true);
     const res = await fetch(`${publicRuntimeConfig.API_BASE_URL}/register`, {
-      method: 'POST',
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json',
+        "Content-Type": "application/json",
       },
       body: JSON.stringify({
         name,
@@ -83,106 +82,108 @@ function Register(props) {
       props.register(data.data);
       props.showAlert({
         message: data.message,
-        severity: "success"
+        severity: "success",
       });
       router.push("/");
     } else {
       const mainMessage = data.message;
-      const message = Object.keys(data.data).map(err => {
-        return <>
-          {data.data[err].map(e => {
-            return <li>{e}</li>
-          })}
-        </>
+      const message = Object.keys(data.data).map((err) => {
+        return (
+          <>
+            {data.data[err].map((e) => {
+              return <li>{e}</li>;
+            })}
+          </>
+        );
       });
       props.showAlert({
-        message: (<>
-          <p>{mainMessage}</p>
-          <ul>{message}</ul>
-        </>),
-        severity: "error"
+        message: (
+          <>
+            <p>{mainMessage}</p>
+            <ul>{message}</ul>
+          </>
+        ),
+        severity: "error",
       });
     }
-  }
+  };
 
   return (
-    <Layout>
-      <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <div className={classes.paper}>
-          <Avatar className={classes.avatar}>
-            <AssignmentIndIcon />
-          </Avatar>
-          <Typography component="h1" variant="h5">
-            Register
-          </Typography>
-          <form className={classes.form} noValidate onSubmit={handleRegister}>
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="name"
-              label="Name"
-              name="name"
-              autoComplete="name"
-              onChange={(e) => setName(e.target.value)}
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              onChange={(e) => setEmail(e.target.value)}
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              onChange={(e) => setPassword(e.target.value)}
-            />
-            <TextField
-              variant="outlined"
-              margin="normal"
-              required
-              fullWidth
-              name="password_confirmation"
-              label="Confirm Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-              onChange={(e) => setConfirmPassword(e.target.value)}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.submit}
-            >
-              Sign Up
-            </Button>
-          </form>
-        </div>
-        <Box mt={8}>
-          <Copyright />
-        </Box>
-      </Container>
-    </Layout>
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <div className={classes.paper}>
+        <Avatar className={classes.avatar}>
+          <AssignmentIndIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          Register
+        </Typography>
+        <form className={classes.form} noValidate onSubmit={handleRegister}>
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="name"
+            label="Name"
+            name="name"
+            autoComplete="name"
+            onChange={(e) => setName(e.target.value)}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            id="email"
+            label="Email Address"
+            name="email"
+            autoComplete="email"
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="password"
+            label="Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <TextField
+            variant="outlined"
+            margin="normal"
+            required
+            fullWidth
+            name="password_confirmation"
+            label="Confirm Password"
+            type="password"
+            id="password"
+            autoComplete="current-password"
+            onChange={(e) => setConfirmPassword(e.target.value)}
+          />
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.submit}
+          >
+            Sign Up
+          </Button>
+        </form>
+      </div>
+      <Box mt={8}>
+        <Copyright />
+      </Box>
+    </Container>
   );
 }
 
-const mapDispatchToProps = dispatch =>
-  bindActionCreators({ register, showAlert }, dispatch)
+const mapDispatchToProps = (dispatch) =>
+  bindActionCreators({ register, showAlert }, dispatch);
 
 export default connect(null, mapDispatchToProps)(Register);
