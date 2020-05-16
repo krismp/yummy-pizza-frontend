@@ -12,6 +12,7 @@ import Link from "@material-ui/core/Link";
 import Box from "@material-ui/core/Box";
 import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import Typography from "@material-ui/core/Typography";
+import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
 import Layout from "../components/layout";
@@ -76,12 +77,14 @@ function Checkout(props) {
 
   const fetchCart = async () => {
     if (props.cartId) {
+      setLoading(true);
       const result = await fetch(
         `${publicRuntimeConfig.API_BASE_URL}/carts/${props.cartId}`,
       );
   
       const json = await result.json();
       setCart(json.data);
+      setLoading(false);
     }
   }
 
@@ -99,7 +102,7 @@ function Checkout(props) {
         address,
         delivery_cost_in_usd: deliveryCost,
         final_price_in_usd: parseFloat((cart.total_price + deliveryCost).toFixed(2)),
-        status: "waiting",
+        status: "completed",
       }),
     });
 
@@ -156,7 +159,12 @@ function Checkout(props) {
               </TableRow>
             </TableHead>
             <TableBody>
-              {cart.cart_items.map((item) => (
+              {loading && <TableRow>
+                <TableCell align="center" colSpan={3}>
+                  <CircularProgress/>
+                </TableCell>
+              </TableRow>}
+              {!loading && cart.cart_items.length > 0 && cart.cart_items.map((item) => (
                 <TableRow key={item.product.id}>
                   <TableCell component="th" scope="row">
                       {item.product.name}
