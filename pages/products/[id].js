@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { withStyles } from "@material-ui/core/styles";
 import Card from "@material-ui/core/Card";
 import Grid from "@material-ui/core/Grid";
@@ -6,55 +6,45 @@ import CardActionArea from "@material-ui/core/CardActionArea";
 import CardActions from "@material-ui/core/CardActions";
 import CardContent from "@material-ui/core/CardContent";
 import CardMedia from "@material-ui/core/CardMedia";
-import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
 import Button from "@material-ui/core/Button";
 import Typography from "@material-ui/core/Typography";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { addToCart, showAlert } from "../../store";
-import fetch from "isomorphic-unfetch";
-import getConfig from "next/config";
 import theme from "../../src/theme";
+import Chip from '@material-ui/core/Chip';
+import AddShoppingCartIcon from "@material-ui/icons/AddShoppingCart";
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
 import HourglassEmptyIcon from "@material-ui/icons/HourglassEmpty";
+import { getProductDetail, postAddToCart } from "../../lib/api";
 
 const Price = withStyles({
-  backgroundColor: theme.palette.primary.main,
-  color: `white`,
-  padding: theme.spacing(1),
-})(Typography);
-
-const { publicRuntimeConfig } = getConfig();
+  root: {
+    fontSize: `1.8em`,
+    marginBottom: theme.spacing(2)
+  }
+})(Chip);
 
 function ProductDetail(props) {
   const [loading, setLoading] = useState(false);
-  const { product, cartId, addToCart, showAlert, user } = props;
+  const { product, cartId, dispatchShowAlert, dispatchAddToCart, user } = props;
 
   async function handleAddToCart() {
     setLoading(true);
-    const body = JSON.stringify({
-      user_id: user.id,
-      cart_id: cartId,
-      product_id: product.id,
+    const data = await postAddToCart({
+      userId: user.id,
+      cartId: cartId,
+      productId: product.id,
       total: 1,
-      total_price_in_usd: parseFloat(product.price_in_usd),
+      price: parseFloat(product.price_in_usd),
     });
-
-    const res = await fetch(`${publicRuntimeConfig.API_BASE_URL}/cart_items`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body,
-    });
-
-    const data = await res.json();
     setLoading(false);
     if (data.success) {
-      showAlert({
+      dispatchShowAlert({
         message: data.message,
         severity: "success",
       });
-      addToCart(data.data);
+      dispatchAddToCart(data.data);
     } else {
       const mainMessage = data.message;
       const message = Object.keys(data.data).map((err) => {
@@ -66,7 +56,7 @@ function ProductDetail(props) {
           </>
         );
       });
-      showAlert({
+      dispatchShowAlert({
         message: (
           <>
             <p>{mainMessage}</p>
@@ -100,9 +90,12 @@ function ProductDetail(props) {
               </Typography>
             </Grid>
             <Grid item>
-              <Price gutterBottom variant="h6" component="h2">
-                ${product.price_in_usd}
-              </Price>
+              <Price
+                label={product.price_in_usd}
+                color="primary"
+                size="medium"
+                icon={<AttachMoneyIcon />}
+              />
             </Grid>
           </Grid>
           <Typography variant="body2" color="textSecondary" component="p">
@@ -138,8 +131,7 @@ function ProductDetail(props) {
 
 export async function getServerSideProps(appContext) {
   const { id } = appContext.query;
-  const res = await fetch(`${publicRuntimeConfig.API_BASE_URL}/products/${id}`);
-  const json = await res.json();
+  const json = await getProductDetail(id);
 
   return {
     props: {
@@ -154,6 +146,6 @@ function mapStateToProps(state) {
 }
 
 const mapDispatchToProps = (dispatch) =>
-  bindActionCreators({ addToCart, showAlert }, dispatch);
+  bindActionCreators({ dispatchAddToCart: addToCart, dispatchShowAlert: showAlert }, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(ProductDetail);
