@@ -6,12 +6,11 @@ import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import CartItem from "../components/CartItem";
-import fetch from "isomorphic-unfetch";
-import getConfig from "next/config";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 import { removeFromCart, showAlert } from '../store';
 import { useRouter } from "next/router";
+import { getCart, removeCartItem } from "../lib/api";
 
 const TotalCartPrice = withStyles({
   root: {
@@ -23,8 +22,6 @@ const TotalCartPrice = withStyles({
     bottom: `0`,
   },
 })(Paper);
-
-const { publicRuntimeConfig } = getConfig();
 
 export function CartPage(props) {
   const [cart, setCart] = useState({ cart_items: [] });
@@ -38,11 +35,7 @@ export function CartPage(props) {
   const fetchData = async () => {
     if (props.cartId) {
       setLoading(true);
-      const result = await fetch(
-        `${publicRuntimeConfig.API_BASE_URL}/carts/${props.cartId}`,
-      );
-  
-      const json = await result.json();
+      const json = await getCart(props.cartId);
       setCart(json.data);
       setLoading(false);
     }
@@ -54,14 +47,7 @@ export function CartPage(props) {
 
   const handleDeleteCartItem = async(itemId, total) => {
     setLoading(true);
-    const res = await fetch(`${publicRuntimeConfig.API_BASE_URL}/cart_items/${itemId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    });
-
-    const data = await res.json();
+    const data = await removeCartItem(itemId);
     setLoading(false);
     if (data.success) {
       props.showAlert({
