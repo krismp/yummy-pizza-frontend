@@ -10,17 +10,14 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
 import CircularProgress from "@material-ui/core/CircularProgress";
-import fetch from "isomorphic-unfetch";
 import { connect } from "react-redux";
-import getConfig from "next/config";
+import { getUserOrders } from "../lib/api";
 
 const useStyles = makeStyles({
   table: {
     minWidth: 650,
   },
 });
-
-const { publicRuntimeConfig } = getConfig();
 
 function Order(props) {
   const [loading, setLoading] = useState(false);
@@ -29,18 +26,10 @@ function Order(props) {
 
   const fetchOrders = async () => {
     setLoading(true);
-    const result = await fetch(
-      `${publicRuntimeConfig.API_BASE_URL}/orders?user_id=${props.user.id}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${props.user.token}`,
-        },
-      }
-    );
-
-    const json = await result.json();
+    const json = await getUserOrders({
+      userId: props.user.id,
+      token: props.user.token
+    });
     setOrders(json.data);
     setLoading(false);
   };
