@@ -1,21 +1,19 @@
 import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
+import Link from "next/link";
 import CardContent from '@material-ui/core/CardContent';
 import CardMedia from '@material-ui/core/CardMedia';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
-// import AddIcon from '@material-ui/icons/Add';
 import DeleteIcon from '@material-ui/icons/Delete';
-// import RemoveIcon from '@material-ui/icons/Remove';
-import fetch from 'isomorphic-unfetch';
-import getConfig from 'next/config';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { resetCart, showAlert } from '../store';
-
-const { publicRuntimeConfig } = getConfig();
+import Chip from '@material-ui/core/Chip';
+import AttachMoneyIcon from '@material-ui/icons/AttachMoney';
+import theme from "../src/theme";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -47,6 +45,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const Price = withStyles({
+  root: {
+    fontSize: `18px`,
+    marginBottom: theme.spacing(2)
+  }
+})(Chip);
+
 function CartItem(props) {
   const classes = useStyles();
 
@@ -63,18 +68,25 @@ function CartItem(props) {
       />
       <div className={classes.details}>
         <CardContent className={classes.content}>
-          <Typography component="h5" variant="h5">
-            {props.product.name}
-          </Typography>
-          <Typography variant="subtitle1" color="textSecondary">
-            ${props.total_price_in_usd}
-          </Typography>
+          <Link
+            href={`/products/[id]`}
+            as={`/products/${props.product.id}`}
+          >
+            <a>
+              <Typography component="h5" variant="h5">
+                {props.product.name}
+              </Typography>
+            </a>
+          </Link>
+          <Price
+            label={props.total_price_in_usd}
+            color="primary"
+            variant="outlined"
+            size="medium"
+            icon={<AttachMoneyIcon />}
+          />
         </CardContent>
         <div className={classes.controls}>
-          {/* disabled, nice to have feature */}
-          {/* <IconButton aria-label="previous">
-            <AddIcon/>
-          </IconButton> */}
           <IconButton aria-label="play/pause">
             <TextField
               id="outlined-read-only-input"
@@ -87,10 +99,6 @@ function CartItem(props) {
               className={classes.input}
             />
           </IconButton>
-          {/* disabled, nice to have feature */}
-          {/* <IconButton aria-label="next" disabled>
-            <RemoveIcon/>
-          </IconButton> */}
           <IconButton aria-label="next" onClick={deleteItem}>
             <DeleteIcon/>
           </IconButton>
