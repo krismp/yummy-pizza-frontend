@@ -15,12 +15,11 @@ import Typography from "@material-ui/core/Typography";
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from "@material-ui/core/styles";
 import Container from "@material-ui/core/Container";
-import fetch from "isomorphic-unfetch";
-import getConfig from "next/config";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 import { showAlert, resetCart } from '../store';
 import { useRouter } from "next/router";
+import { getCart, postCreateOrder } from "../lib/api";
 
 function Copyright() {
   return (
@@ -54,8 +53,6 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const { publicRuntimeConfig } = getConfig();
-
 const randomDeliveryCost = () => {
   const float = Math.random() * (10 - 5) + 5;
 
@@ -77,11 +74,7 @@ function Checkout(props) {
   const fetchCart = async () => {
     if (props.cartId) {
       setLoading(true);
-      const result = await fetch(
-        `${publicRuntimeConfig.API_BASE_URL}/carts/${props.cartId}`,
-      );
-  
-      const json = await result.json();
+      const json = await getCart(props.cartId);
       setCart(json.data);
       setLoading(false);
     }
@@ -89,23 +82,15 @@ function Checkout(props) {
 
   const handleCheckout = async (e) => {
     e.preventDefault();
+    const { user, cartId } = props;
     setLoading(true);
-    const res = await fetch(`${publicRuntimeConfig.API_BASE_URL}/orders`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        user_id: props.user ? props.user.id : props.user,
-        cart_id: props.cartId,
-        address,
-        delivery_cost_in_usd: deliveryCost,
-        final_price_in_usd: parseFloat((cart.total_price + deliveryCost).toFixed(2)),
-        status: "completed",
-      }),
+    const data = await postCreateOrder({
+      userId: user ? user.id : user,
+      cartId,
+      address,
+      deliveryCost,
+      finalPrice: parseFloat((cart.total_price + deliveryCost).toFixed(2)),
     });
-
-    const data = await res.json();
     setLoading(false);
     if (data.success) {
       props.resetCart(data.data);
