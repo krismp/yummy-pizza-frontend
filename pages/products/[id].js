@@ -18,11 +18,9 @@ import theme from "../../src/theme";
 import HourglassEmptyIcon from "@material-ui/icons/HourglassEmpty";
 
 const Price = withStyles({
-  root: {
-    backgroundColor: theme.palette.primary.main,
-    color: `white`,
-    padding: theme.spacing(1),
-  },
+  backgroundColor: theme.palette.primary.main,
+  color: `white`,
+  padding: theme.spacing(1),
 })(Typography);
 
 const { publicRuntimeConfig } = getConfig();
