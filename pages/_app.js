@@ -10,7 +10,7 @@ import { ThemeProvider } from "@material-ui/core/styles";
 import LinearProgress from '@material-ui/core/LinearProgress';
 import CssBaseline from "@material-ui/core/CssBaseline";
 import theme from "../src/theme";
-import Layout from "../components/layout";
+import Layout from "../components/Layout";
 
 function MyApp(props) {
   const { Component, pageProps, reduxStore } = props;

@@ -1,7 +1,7 @@
 import React from "react";
 import Link from 'next/link'
 import Grid from "@material-ui/core/Grid";
-import Product from "../components/product";
+import Product from "../components/Product";
 import fetch from 'isomorphic-unfetch';
 import getConfig from "next/config";
 

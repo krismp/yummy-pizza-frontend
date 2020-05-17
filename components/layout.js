@@ -7,7 +7,7 @@ import Typography from '@material-ui/core/Typography';
 import IconButton from '@material-ui/core/IconButton';
 import Box from '@material-ui/core/Box';
 import Badge from '@material-ui/core/Badge';
-import Alert from "./alert";
+import Alert from "./Alert";
 import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
 import LocalPizzaIcon from '@material-ui/icons/LocalPizza';
 import { connect } from 'react-redux';
