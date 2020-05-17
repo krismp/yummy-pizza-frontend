@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from "react";
-import Avatar from "@material-ui/core/Avatar";
-import Button from "@material-ui/core/Button";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import TextField from "@material-ui/core/TextField";
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-import Link from "@material-ui/core/Link";
-import Box from "@material-ui/core/Box";
-import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
-import Typography from "@material-ui/core/Typography";
-import CircularProgress from '@material-ui/core/CircularProgress';
 import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
+import {
+  Avatar,
+  Button,
+  CssBaseline,
+  TextField,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Link,
+  Box,
+  Typography,
+  CircularProgress,
+  Container
+} from "@material-ui/core";
+import MonetizationOnIcon from '@material-ui/icons/MonetizationOn';
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 import { showAlert, resetCart } from '../store';

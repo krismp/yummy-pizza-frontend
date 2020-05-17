@@ -1,12 +1,14 @@
 import React from "react";
-import Avatar from "@material-ui/core/Avatar";
-import CssBaseline from "@material-ui/core/CssBaseline";
-import Link from "@material-ui/core/Link";
-import Box from "@material-ui/core/Box";
 import AssignmentIndIcon from "@material-ui/icons/AssignmentInd";
-import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
+import {
+  Avatar,
+  CssBaseline,
+  Link,
+  Box,
+  Container,
+  Typography
+} from "@material-ui/core";
 
 function Copyright() {
   return (
