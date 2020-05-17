@@ -20,7 +20,7 @@ import { getProductDetail, postAddToCart } from "../../lib/api";
 
 const Price = withStyles({
   root: {
-    fontSize: `1.8em`,
+    fontSize: `18px`,
     marginBottom: theme.spacing(2)
   }
 })(Chip);
