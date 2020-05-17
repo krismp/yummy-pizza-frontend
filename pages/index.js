@@ -2,10 +2,7 @@ import React from "react";
 import Link from 'next/link'
 import Grid from "@material-ui/core/Grid";
 import Product from "../components/Product";
-import fetch from 'isomorphic-unfetch';
-import getConfig from "next/config";
-
-const { publicRuntimeConfig } = getConfig();
+import { getProducts } from "../lib/api";
 
 function Index({ products }) {
   return (
@@ -28,8 +25,7 @@ function Index({ products }) {
 };
 
 export async function getServerSideProps() {
-  const res = await fetch(`${publicRuntimeConfig.API_BASE_URL}/products`);
-  const json = await res.json();
+  const json = await getProducts();
 
   return {
     props: {
