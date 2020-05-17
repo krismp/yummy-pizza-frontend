@@ -3,15 +3,12 @@ import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import ButtonLink from "../components/ButtonLink";
 import Grid from "@material-ui/core/Grid";
-import fetch from "isomorphic-unfetch";
-import getConfig from "next/config";
 import { connect } from "react-redux";
 import { bindActionCreators } from 'redux';
 import { showAlert, login } from '../store';
 import { useRouter } from "next/router";
 import AuthLayout from "../components/AuthLayout";
-
-const { publicRuntimeConfig } = getConfig();
+import { postLogin } from "../lib/api";
 
 function Login(props) {
   const router = useRouter();
@@ -20,31 +17,24 @@ function Login(props) {
   const [password, setPassword] = useState("");
 
   const handleLogin = async (e) => {
+    const { dispatchLogin, dispatchShowAlert } = props;
     e.preventDefault();
     setLoading(true);
-    const res = await fetch(`${publicRuntimeConfig.API_BASE_URL}/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email,
-        password
-      }),
+    const data = await postLogin({
+      email,
+      password
     });
-
-    const data = await res.json();
     setLoading(false);
     if (data.success) {
-      props.login(data.data);
-      props.showAlert({
+      dispatchLogin(data.data);
+      dispatchShowAlert({
         message: data.message,
         severity: "success"
       });
       router.push("/");
     } else {
       const mainMessage = data.message;
-      props.showAlert({
+      dispatchShowAlert({
         message: (<>
           <p>{mainMessage}</p>
         </>),
@@ -101,6 +91,6 @@ function Login(props) {
 }
 
 const mapDispatchToProps = dispatch =>
-  bindActionCreators({ login, showAlert }, dispatch)
+  bindActionCreators({ dispatchLogin: login, dispatchShowAlert: showAlert }, dispatch)
 
 export default connect(null, mapDispatchToProps)(Login);
