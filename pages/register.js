@@ -1,16 +1,12 @@
 import React, { useState } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
-import fetch from "isomorphic-unfetch";
-import getConfig from "next/config";
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { showAlert, register } from "../store";
 import { useRouter } from "next/router";
 import AuthLayout from "../components/AuthLayout";
-import theme from '../src/theme';
-
-const { publicRuntimeConfig } = getConfig();
+import { postRegister } from "../lib/api";
 
 function Register(props) {
   const router = useRouter();
@@ -21,26 +17,19 @@ function Register(props) {
   const [confirmPassword, setConfirmPassword] = useState("");
 
   const handleRegister = async (e) => {
+    const { dispatchRegister, dispatchShowAlert } = props;
     e.preventDefault();
     setLoading(true);
-    const res = await fetch(`${publicRuntimeConfig.API_BASE_URL}/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        name,
-        email,
-        password,
-        c_password: confirmPassword,
-      }),
+    const data = await postRegister({
+      name,
+      email,
+      password,
+      confirmPassword,
     });
-
-    const data = await res.json();
     setLoading(false);
     if (data.success) {
-      props.register(data.data);
-      props.showAlert({
+      dispatchRegister(data.data);
+      dispatchShowAlert({
         message: data.message,
         severity: "success",
       });
@@ -56,7 +45,7 @@ function Register(props) {
           </>
         );
       });
-      props.showAlert({
+      dispatchShowAlert({
         message: (
           <>
             <p>{mainMessage}</p>
@@ -132,6 +121,6 @@ function Register(props) {
 }
 
 const mapDispatchToProps = (dispatch) =>
-  bindActionCreators({ register, showAlert }, dispatch);
+  bindActionCreators({ dispatchRegister: register, dispatchShowAlert: showAlert }, dispatch);
 
 export default connect(null, mapDispatchToProps)(Register);
