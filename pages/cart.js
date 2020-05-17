@@ -113,7 +113,7 @@ export function CartPage(props) {
                 onDeleteItem={handleDeleteCartItem}
               />
             );
-          }) : (loading ? <CircularProgress/> : <Typography gutterBottom variant="small" component="p">
+          }) : (loading ? <CircularProgress/> : <Typography gutterBottom variant="body2" component="p">
             Your cart is empty!
           </Typography>)
         }
